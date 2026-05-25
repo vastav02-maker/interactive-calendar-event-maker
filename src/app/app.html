@@ -21,7 +21,7 @@
 
     <button type="submit">
 
-      {{ editIndex === null ? 'Add Event' : 'Update Event' }}
+      {{ editId === null ? 'Add Event' : 'Update Event' }}
 
     </button>
 
@@ -29,17 +29,20 @@
 
   <br>
 
-  <div class="event-card" *ngFor="let event of events; let i = index">
+  <div
+    class="event-card"
+    *ngFor="let event of events"
+  >
 
     <h3>{{ event.title }}</h3>
 
     <p>Date: {{ event.date }}</p>
 
-    <button (click)="editEvent(i)">
+    <button (click)="editEvent(event)">
       Edit
     </button>
 
-    <button (click)="deleteEvent(i)">
+    <button (click)="deleteEvent(event.id)">
       Delete
     </button>
 

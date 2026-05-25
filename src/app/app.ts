@@ -1,32 +1,30 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
-  events: any[] = [
-    {
-      title: 'Team Meeting',
-      date: '2026-05-25'
-    },
-    {
-      title: 'Project Submission',
-      date: '2026-05-27'
-    }
-  ];
+  events: any[] = [];
 
   eventForm;
 
-  editIndex: number | null = null;
+  editId: number | null = null;
 
-  constructor(private fb: FormBuilder) {
+  apiUrl = 'http://localhost:3000/events';
+
+  constructor(
+    private fb: FormBuilder,
+    private http: HttpClient
+  ) {
 
     this.eventForm = this.fb.group({
       title: ['', Validators.required],
@@ -35,39 +33,74 @@ export class AppComponent {
 
   }
 
+  ngOnInit(): void {
+    this.loadEvents();
+  }
+
+  loadEvents() {
+
+    this.http.get<any[]>(this.apiUrl)
+      .subscribe(data => {
+        this.events = data;
+      });
+
+  }
+
   addOrUpdateEvent() {
 
     if (this.eventForm.valid) {
 
-      if (this.editIndex === null) {
+      if (this.editId === null) {
 
-        this.events.push(this.eventForm.value);
+        this.http.post(this.apiUrl, this.eventForm.value)
+          .subscribe(() => {
+
+            this.loadEvents();
+
+            this.eventForm.reset();
+
+          });
 
       } else {
 
-        this.events[this.editIndex] = this.eventForm.value;
+        this.http.put(
+          `${this.apiUrl}/${this.editId}`,
+          this.eventForm.value
+        ).subscribe(() => {
 
-        this.editIndex = null;
+          this.loadEvents();
+
+          this.eventForm.reset();
+
+          this.editId = null;
+
+        });
 
       }
-
-      this.eventForm.reset();
 
     }
 
   }
 
-  editEvent(index: number) {
+  editEvent(event: any) {
 
-    this.editIndex = index;
+    this.editId = event.id;
 
-    this.eventForm.patchValue(this.events[index]);
+    this.eventForm.patchValue({
+      title: event.title,
+      date: event.date
+    });
 
   }
 
-  deleteEvent(index: number) {
+  deleteEvent(id: number) {
 
-    this.events.splice(index, 1);
+    this.http.delete(`${this.apiUrl}/${id}`)
+      .subscribe(() => {
+
+        this.loadEvents();
+
+      });
 
   }
 

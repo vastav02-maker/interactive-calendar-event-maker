@@ -1,0 +1,14 @@
+{
+  "events": [
+    {
+      "id": 1,
+      "title": "Team Meeting",
+      "date": "2026-05-25"
+    },
+    {
+      "id": 2,
+      "title": "Project Submission",
+      "date": "2026-05-27"
+    }
+  ]
+}
