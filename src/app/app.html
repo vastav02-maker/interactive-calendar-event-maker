@@ -1,0 +1,8 @@
+<div class="container">
+  <h1>Event Calendar</h1>
+
+  <div class="event-card" *ngFor="let event of events">
+    <h3>{{ event.title }}</h3>
+    <p>Date: {{ event.date }}</p>
+  </div>
+</div>
