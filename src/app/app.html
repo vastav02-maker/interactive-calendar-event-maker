@@ -1,8 +1,38 @@
 <div class="container">
+
   <h1>Event Calendar</h1>
 
+  <form [formGroup]="eventForm" (ngSubmit)="addEvent()">
+
+    <input
+      type="text"
+      placeholder="Enter Event Title"
+      formControlName="title"
+    >
+
+    <br><br>
+
+    <input
+      type="date"
+      formControlName="date"
+    >
+
+    <br><br>
+
+    <button type="submit">
+      Add Event
+    </button>
+
+  </form>
+
+  <br>
+
   <div class="event-card" *ngFor="let event of events">
+
     <h3>{{ event.title }}</h3>
+
     <p>Date: {{ event.date }}</p>
+
   </div>
+
 </div>
