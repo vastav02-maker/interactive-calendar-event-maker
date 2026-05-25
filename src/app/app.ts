@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
+import { StateService } from './services/state';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +24,8 @@ export class AppComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private http: HttpClient
+    private http: HttpClient,
+    private stateService: StateService
   ) {
 
     this.eventForm = this.fb.group({
@@ -34,14 +36,22 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
     this.loadEvents();
+
+    this.stateService.currentEvents.subscribe(data => {
+      this.events = data;
+    });
+
   }
 
   loadEvents() {
 
     this.http.get<any[]>(this.apiUrl)
       .subscribe(data => {
-        this.events = data;
+
+        this.stateService.updateEvents(data);
+
       });
 
   }
