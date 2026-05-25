@@ -24,6 +24,8 @@ export class AppComponent {
 
   eventForm;
 
+  editIndex: number | null = null;
+
   constructor(private fb: FormBuilder) {
 
     this.eventForm = this.fb.group({
@@ -33,15 +35,40 @@ export class AppComponent {
 
   }
 
-  addEvent() {
+  addOrUpdateEvent() {
 
     if (this.eventForm.valid) {
 
-      this.events.push(this.eventForm.value);
+      if (this.editIndex === null) {
+
+        this.events.push(this.eventForm.value);
+
+      } else {
+
+        this.events[this.editIndex] = this.eventForm.value;
+
+        this.editIndex = null;
+
+      }
 
       this.eventForm.reset();
 
     }
 
   }
+
+  editEvent(index: number) {
+
+    this.editIndex = index;
+
+    this.eventForm.patchValue(this.events[index]);
+
+  }
+
+  deleteEvent(index: number) {
+
+    this.events.splice(index, 1);
+
+  }
+
 }
